@@ -22,6 +22,8 @@ let sliders = [
     {id: "dp", class_: "p", value: 0.2, min: 0, max: 1,    step: 0.001},
     {id: "n",  class_: "n", value: 30,  min: 1, max: 1000, step: 1}
   ],
+  labels =  [ {id: "p", name: "Predator"},
+              {id: "h", name: "Prey"} ],
   h0 = 0.25,
   p0 = 0.25,
   first = 0,
@@ -69,6 +71,7 @@ x.time.domain([0,tsteps]);
 y.time.domain([0,0.5]);
 
 let defs = svg.phase.append("defs")
+
 defs.append("marker")
     .attr("id", "arrow")
     .attr("viewBox", "0 -5 10 10")
@@ -80,7 +83,8 @@ defs.append("marker")
     .append("path")
       .attr("d", "M0,-5L10,0L0,5")
       .attr("class","arrowHead");
-  
+
+// setup the phase diagram
 let gp = svg.phase.append("g")
     .attr("id", "refresh")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -95,7 +99,7 @@ gp.append("g")
     .attr("y", 0)
     .attr("dy", "-0.5em")
     .style("fill", z("h"))
-    .text("prey >");
+    .text(labels[labels.findIndex(function(d,i) { return d.id=="h" })].name + " >");
 
 gp.append("g")
     .attr("class", "axis axis--y")
@@ -109,12 +113,14 @@ gp.append("g")
     .attr("dy", "1em")
     .attr("text-anchor", "end")
     .style("fill", z("p"))
-    .text("predator >");
+    .text(labels[labels.findIndex(function(d,i) { return d.id=="p" })].name + " >");
 
 gp.append("g")
     .attr("class", "grid")
     .call(make_yp_gridlines().tickSize(-width.phase).tickFormat(""));
 
+
+// set up the time series plot
 let gt = svg.time.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -127,28 +133,55 @@ gt.append("g")
     .attr("x", x.time(d3.max(x.time.domain())))
     .attr("y", 0)
     .attr("dy", "-0.5em")
-    .text("time");
+    .text("time >");
 
 gt.append("g")
     .attr("class", "axis axis--y")
-    .call(d3.axisLeft(y.time))
-  .append("text")
-    .attr("class", "label")
-    .attr("transform", "rotate(-90)")
-    .attr("x", 0)
-    .attr("y", y.time(d3.max(y.time.domain())))
-    .attr("dx", "-0.5em")
-    .attr("dy", "1em")
-    .attr("text-anchor", "end")
-    .text("");
+    .call(d3.axisLeft(y.time));
+
+let legendRectSize = 18,
+    legendSpacing = 5;
+
+let legend = gt.selectAll(".legend")
+    .attr("class", "yourmom")
+    .data(labels, function(d,i) { return d; } )
+    .enter()
+      .append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d,i) {
+        let v = width.time - (i+1) * (60+legendRectSize),
+            h = 0;
+            return 'translate(' + v + ',' + h + ')';
+      });
+
+legend.append('rect')
+  .attr('width',  legendRectSize)
+  .attr('height', legendRectSize)
+  .style('fill',   function(d,i) { return z(d.id); })
+  .style('stroke', function(d,i) {
+    console.log(d);
+    return z(d.id);
+  });
+
+// Alternative
+legend.append('text')
+  .attr('x', legendRectSize + legendSpacing)
+  .attr('y', legendRectSize - legendSpacing)
+  .text(function(d,i) {
+  console.log("d");
+return d.name; });
+
 
 function pupdate(pdata) {
 
   let phase = gp.selectAll(".phase")
       .data(pdata, function(d) { return d; });
+
   phase.exit().remove();
-  phase.enter().append("line")
-      .attr("class", "phase line" + (first++ ? "" : " first")) // could not get "first" to .exit().  ??
+
+  phase.enter()
+    .append("line")
+      .attr("class", "line phase" + (first++ ? "" : " first"))
       .attr("marker-end", "url(#arrow)")
       .attr("x1", function(d) { return x.phase(d.h0); })
       .attr("y1", function(d) { return y.phase(d.p0); })
@@ -159,9 +192,13 @@ function pupdate(pdata) {
 function tupdate(tdata) {
   let time = gt.selectAll(".time")
       .data(tdata, function(d) { return d; });
+
   time.exit().remove();
-  time.enter().append("path")
-      .attr("class", "time line")
+
+  time.enter().append("g")
+    .attr("class", "time")
+    .append("path")
+      .attr("class", "line")
       .style("stroke", function(d,i) { return z(d.id); })
       .attr("d", function(d,i) { return timeline(d.values); });
 }; 
@@ -176,10 +213,11 @@ document.addEventListener('DOMContentLoaded', function() {
       pdata = [],                  // phase graph data
       tdata = [{id:"",values:[]}]; // time series data (include a dummy row)
 
-  // initialize tdata array and set the background color of the sliders
   Object.keys(step).forEach(function(d,i) {
-    d3.selectAll("." + d + "slider .ui-slider-track").style("background-color", z(d));
+    // initialize tdata array
     tdata.push({id: d, values: [] })
+    //set the background color of the sliders
+    d3.selectAll("." + d + "slider .ui-slider-track").style("background-color", z(d));
   });
 
   // label the slider handles
