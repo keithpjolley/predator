@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<!-- 01SEP2017 keithpjolley@gmail.com Squalor Heights, CA. MIT License -->
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" type="image/png" href="include/images/fly.ico">
+  <link rel="stylesheet" type="text/css" href="include/css/style.css">
+  <title>Predator/Prey</title>
+  <!-- i have very slow, high-latency internets at home so i keep local copies for dev. -->
+  <!--script type="text/javascript" src="include/js/d3.v4.min.js"></script-->
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+  <!--link rel="stylesheet" href="include/css/jquery.mobile-1.4.5.min.css"-->
+  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <!--script src="include/js/jquery-1.11.3.min.js"></script-->
+  <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+  <!--script src="include/js/jquery.mobile-1.4.5.min.js"></script-->
+</head>
+<body>
+  <div id="plotdiv">
+    <h2 id="thetitle"></h2>
+    <svg id="phase" width="960" height="500"></svg>
+    <svg id="time"  width="960" height="150"></svg>
+    <div class="inset">
+      <div id="thecontrols"></div>
+    </div>
+    <div class="inset" style="text-align:left;width=50%;">
+      <p> This model represents an ecosystem of
+        a population of "prey", like rabbits, and "predators", like
+        coyotes. As the number of prey increases then the number of
+        predators will increas because there's more food for them. As the 
+        number of predators increase then the number of prey being eaten also
+        increases, which decreases their total population. This puts pressure
+        on the predators because now there's less food for them to eat so their
+        numbers start decreasing, which allows the number of prey to increase.
+        And so the cycle continues.
+      </p>
+      <p>
+        There needs to be a balance between the predators and prey for the ecosystem
+        to be in balance. If the two species are not in harmony, like too many predators
+        being born, then both species can go extinct.
+      </p>
+      <p>
+        The sliders represent the relative likelyhoods of births or deaths of the population.
+        <ul>
+          <li>"bh" is the birthrate of the prey.</li>
+          <li>"dh" is the probability of prey being eaten by the predators.</li>
+          <li>"bp" is the probability of predators giving birth after eating.</li>
+          <li>"dp" is the probability of the a predator dying.</li>
+          <li>"n" is the number of generations to display.
+        </ul>
+      </p>
+      <p>If you cause an extinction hit the "page reload" button to start again.</p>
+      <p>
+        This is a phase diagram of the Lotka-Volterra predator-prey model.
+        The math behind this is explained in Chapter 2 of this book:
+        <strong>N. Boccara,
+        <i><a href="https://www.springer.com/us/book/9781441965615">Modeling Complex Systems:
+        Second Edition, Graduate Texts in Physics</a></i>, 25 DOI 10.1007/978-1-4419-6562-2 2,
+        Springer Science+Business Media, LLC 2010
+        </strong>. A preview of 
+        <a href="https://www.springer.com/us/book/9781441965615#">Chapter 2</a> is available
+        from the publisher. Perhaps v2 I'll add a time series plot which helps demonstrate how
+        the phase-shift in the predator-prey populations.
+      </p>
+    </div>
+  </div>
+  <script type="text/javascript" src="include/js/predator.js"></script>
+</body>
+</html>
