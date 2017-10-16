@@ -8,23 +8,17 @@
   background-color: white;
 }
 
-line.line.phase.first {
+line.phase.line.first {
   opacity: 0;
   stroke: none;
   fill: none;
 }
 
-#arrow, line.arrow, line.line {
+#arrow, line.arrow, .line {
   stroke: green;
   stroke-width: 2px;
   fill: none;
   opacity: 0.5;
-}
-
-.time path.line {
-  stroke-width: 1px;
-  fill: none;
-  opacity: 1;
 }
 
 .axis line, .axis path {
